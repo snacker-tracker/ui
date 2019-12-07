@@ -2,7 +2,7 @@ version: "3"
 
 services:
   bare: &app
-    image: node:8.16.0
+    image: node:10
     command: bash
     working_dir: /app/
     command: yarn dev
