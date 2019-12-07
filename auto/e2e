@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+exitfn() {
+	if [ -n "$GO_PIPELINE_LABEL" ]; then
+		echo -- running in GoCD. cleanup containers
+		docker-compose -f docker-compose.e2e.yml -f docker-compose.yml down --remove-orphans
+	fi
+}
+
+trap exitfn EXIT
+
+exitfn
+
+docker volume create yarn-cache > /dev/null || true
+
+docker-compose -f docker-compose.yml -f docker-compose.e2e.yml build
+
+docker-compose -f docker-compose.yml -f docker-compose.e2e.yml run --service-ports --use-aliases  --rm e2e

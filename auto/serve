@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+export SERVICE="web"
+
+./auto/dev-environment yarn start

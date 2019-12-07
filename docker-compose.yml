@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  bare: &app
+    image: node:8.16.0
+    command: bash
+    working_dir: /app/
+    command: yarn dev
+    volumes:
+      - ./:/app/
+      - yarn-cache:/usr/local/share/.cache/yarn/v2
+      - node_modules:/app/node_modules/
+    environment:
+      ENVIRONMENT_NAME: dev
+      USE_SWAGGER_VALIDATION: ${USE_SWAGGER_VALIDATION:-"false"}
+
+  web:
+    <<: *app
+    ports:
+      - 3000:3000
+    command: yarn start
+
+volumes:
+  node_modules: {}
+  yarn-cache: {
+    external: true
+  }

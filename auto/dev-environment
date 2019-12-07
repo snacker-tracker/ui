@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+docker volume create yarn-cache > /dev/null || true
+
+docker-compose run bare yarn install
+
+docker-compose run --use-aliases --service-ports ${SERVICE-bare} ${@}
