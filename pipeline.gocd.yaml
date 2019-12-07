@@ -1,0 +1,164 @@
+format_version: 2
+common:
+  tasks:
+    deploy: &deploy
+      script: |
+        set -e
+
+        helm upgrade --install --wait --timeout 300 \
+          --namespace ${PROJECT}-$K8S_NAMESPACE \
+          ${CHART_NAME}-$K8S_NAMESPACE \
+          ./chart/${CHART_NAME}-*.tgz \
+          --values ./chart/${K8S_NAMESPACE}.yml
+
+pipelines:
+  snacker-tracker-ui-test:
+    group: snacker-tracker-ui
+    label_template: "${git[:8]}"
+    lock_behavior: unlockWhenFinished
+    timer:
+      spec: "* * * * * ? */15"
+      only_on_changes: yes
+    materials:
+      git:
+        type: configrepo
+    environment_variables:
+      #REGISTRY: "DEFINED ON THE AGENT"
+      IMAGE: snacker-tracker/ui
+      CHART_NAME: snacker-tracker-ui
+      PROJECT: snacker-tracker
+    stages:
+      - tests:
+          jobs:
+            tests:
+              tasks:
+                - script: |
+                    exit 0
+
+                    ./auto/clean-up
+
+                    set -e
+
+                    ./auto/test
+
+#              artifacts:
+#                - test:
+#                    source: coverage/
+
+            lint:
+              tasks:
+                - script: |
+                    exit 0
+                    ./auto/clean-up
+
+                    set -e
+
+                    ./auto/lint
+
+            audit:
+              tasks:
+                - script: |
+                    exit 0
+                    ##AUDIT_RESULT="$(./auto/yarn audit)"
+                    AUDIT_RESULT="$(docker run -v `pwd`:/app/ -w /app/ node:10 yarn audit)"
+                    set -e
+
+                    echo "$AUDIT_RESULT"
+
+                    if [ "$(echo $AUDIT_RESULT | grep High | wc -l)" -gt 0 ]; then
+                      exit 1
+                    fi
+
+            validate-swagger:
+              tasks:
+                - script: |
+                    set -e
+                    exit 0
+
+                    ./auto/validate-swagger
+
+  snacker-tracker-ui-build:
+    group: snacker-tracker-ui
+    label_template: "0.1.${COUNT}-${upstream}"
+    lock_behavior: unlockWhenFinished
+    materials:
+      upstream:
+        pipeline: snacker-tracker-ui-test
+        stage: tests
+      git:
+        type: configrepo
+    environment_variables:
+      #REGISTRY: "DEFINED ON THE AGENT"
+      IMAGE: snacker-tracker/ui
+      CHART_NAME: snacker-tracker-ui
+      PROJECT: snacker-tracker
+    stages:
+      - package:
+          jobs:
+            build-image:
+              tasks:
+                - script: |
+                    set -e
+
+                    ./auto/build
+
+                    docker run -v `pwd`:/app/ alpine chown -R $(id -u):$(id -g) /app/build
+
+                    docker build -t ${REGISTRY}/${IMAGE}:${GO_PIPELINE_LABEL} \
+                      --label version=${GO_PIPELINE_LABEL} \
+                      --label git-commit=${GO_REVISION_GIT} \
+                      --label go-pipeline=${GO_PIPELINE_NAME} \
+                      --label go-pipeline-counter=${GO_PIPELINE_COUNTER} \
+                      --label go-pipeline-stage=${GO_STAGE_NAME} \
+                      --label go-pipeline-stage-counter=${GO_STAGE_COUNTER} \
+                      --label go-pipeline-job=${GO_JOB_NAME} \
+                      --build-arg APP_VERSION=${GO_PIPELINE_LABEL} \
+                      .
+
+                    docker tag ${REGISTRY}/${IMAGE}:${GO_PIPELINE_LABEL} ${REGISTRY}/${IMAGE}:latest
+                    docker push ${REGISTRY}/${IMAGE}:${GO_PIPELINE_LABEL}
+                    docker push ${REGISTRY}/${IMAGE}:latest
+
+            package:
+              tasks:
+                - script: |
+                    set -e
+
+                    helm lint helm-charts/${CHART_NAME}
+
+                    helm package --version "$(echo $GO_PIPELINE_LABEL | awk -F '-' '{print $1}')" --app-version $GO_PIPELINE_LABEL ./helm-charts/${CHART_NAME}
+              artifacts:
+                - build:
+                    source: snacker-tracker-ui-*.tgz
+                    destination: ./chart/
+                - build:
+                    source: helm-charts/values/*
+                    destination: ./chart/
+
+  snacker-tracker-ui-deploy-qa:
+    group: snacker-tracker-ui
+    label_template: "${upstream}"
+    lock_behavior: unlockWhenFinished
+    materials:
+      upstream:
+        pipeline: snacker-tracker-ui-build
+        stage: package
+    environment_variables:
+      K8S_NAMESPACE: qa
+      CHART_NAME: snacker-tracker-ui
+      PROJECT: snacker-tracker
+    secure_variables:
+      DATABASE_PASSWORD: "AES:18jhrqGd0n44Gyb4Enbxww==:caltQWdr90nZA2ePrxQOuA=="
+      AWS_SECRET_ACCESS_KEY: "AES:sD7ZqSU5xDUGEz6lwCBCOQ==:ujFaho4OGe60fY7+2OfOjeY/u5m3E2aYmlgS24PSP2GDWBEBvSug6D9NA/i+7qGl"
+    stages:
+      - deploy:
+          jobs:
+            helm-upgrade:
+              tasks:
+                - fetch:
+                    pipeline: snacker-tracker-ui-build
+                    stage: package
+                    job: package
+                    source: chart/
+                    destination: ./
+                - *deploy
