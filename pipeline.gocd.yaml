@@ -9,7 +9,7 @@ common:
           --namespace ${PROJECT}-$K8S_NAMESPACE \
           ${CHART_NAME}-$K8S_NAMESPACE \
           ./chart/${CHART_NAME}-*.tgz \
-          --values ./chart/${K8S_NAMESPACE}.yml
+          --values ./chart/${K8S_NAMESPACE}.yaml
 
 pipelines:
   snacker-tracker-ui-test:
