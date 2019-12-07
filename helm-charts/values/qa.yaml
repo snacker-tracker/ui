@@ -1,0 +1,16 @@
+ingress:
+  enabled: true
+  hosts:
+    - host: ui.snacker-tracker.qa.k8s.fscker.org
+      paths:
+        - /
+  tls:
+    - secretName: ui-snacker-tracker-qa-k8s-fscker-org
+      hosts:
+        - ui.snacker-tracker.qa.k8s.fscker.org
+
+resources:
+  # NON-DEFAULT: We should *always* specify `requests`, but probably not `limits`
+  requests:
+    cpu: 0.01
+    memory: 16Mi
