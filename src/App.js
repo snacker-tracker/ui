@@ -27,7 +27,7 @@ import {
   Route
 } from "react-router-dom";
 
-const REPORTER_URL = 'https://reporter.snacker-tracker.qa.k8s.fscker.org'
+const REPORTER_URL = window.location.href.includes('prod') ? 'https://reporter.snacker-tracker.prod.k8s.fscker.org' : 'https://reporter.snacker-tracker.qa.k8s.fscker.org'
 
 class DataTable extends React.Component {
   constructor(sources, columns) {

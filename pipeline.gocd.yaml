@@ -147,9 +147,6 @@ pipelines:
       K8S_NAMESPACE: qa
       CHART_NAME: snacker-tracker-ui
       PROJECT: snacker-tracker
-    secure_variables:
-      DATABASE_PASSWORD: "AES:18jhrqGd0n44Gyb4Enbxww==:caltQWdr90nZA2ePrxQOuA=="
-      AWS_SECRET_ACCESS_KEY: "AES:sD7ZqSU5xDUGEz6lwCBCOQ==:ujFaho4OGe60fY7+2OfOjeY/u5m3E2aYmlgS24PSP2GDWBEBvSug6D9NA/i+7qGl"
     stages:
       - deploy:
           jobs:
@@ -157,6 +154,31 @@ pipelines:
               tasks:
                 - fetch:
                     pipeline: snacker-tracker-ui-build
+                    stage: package
+                    job: package
+                    source: chart/
+                    destination: ./
+                - *deploy
+
+  snacker-tracker-ui-deploy-prod:
+    group: snacker-tracker-ui
+    label_template: "${upstream}"
+    lock_behavior: unlockWhenFinished
+    materials:
+      upstream:
+        pipeline: snacker-tracker-ui-deploy-qa
+        stage: deploy
+    environment_variables:
+      K8S_NAMESPACE: prod
+      CHART_NAME: snacker-tracker-ui
+      PROJECT: snacker-tracker
+    stages:
+      - deploy:
+          jobs:
+            helm-upgrade:
+              tasks:
+                - fetch:
+                    pipeline: snacker-tracker-ui-build/snacker-tracker-ui-deploy-qa
                     stage: package
                     job: package
                     source: chart/
