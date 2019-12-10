@@ -1,9 +1,8 @@
-import React from 'react';
+import React from "react";
 import logo from './logo.svg';
 import './App.css';
 import dayjs from 'dayjs'
 
-//import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -21,6 +20,11 @@ import FormControl from 'react-bootstrap/FormControl'
 
 import { Chart } from 'react-charts'
 
+import { useAuth0 } from "./react-auth0-spa"
+
+//import Profile from './profile'
+
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -28,6 +32,28 @@ import {
 } from "react-router-dom";
 
 const REPORTER_URL = window.location.href.includes('prod') ? 'https://reporter.snacker-tracker.prod.k8s.fscker.org' : 'https://reporter.snacker-tracker.qa.k8s.fscker.org'
+
+
+
+
+
+const LoginThing = () => {
+  const { isAuthenticated, loginWithPopup, logout } = useAuth0();
+
+  console.log(isAuthenticated, loginWithPopup)
+
+  return (
+    <div>
+      {!isAuthenticated && (
+        <button onClick={() => loginWithPopup({})}>Log in</button>
+      )}
+
+      {isAuthenticated && <button onClick={() => logout()}>Log out</button>}
+    </div>
+  );
+};
+
+
 
 class DataTable extends React.Component {
   constructor(sources, columns) {
@@ -261,10 +287,9 @@ class ProductDetailsPane extends React.Component {
             <Button>{this.state.method === 'CreateCode' ? 'Create' : 'Save' }</Button>
           </Col>
         </Row>
-            <pre>
-              { JSON.stringify(this.state, null, 2) }
-            </pre>
-
+        <pre>
+          { JSON.stringify(this.state, null, 2) }
+        </pre>
       </Container>
     )
   }
@@ -313,6 +338,7 @@ function App() {
             <Nav.Link href="/latest-scans">Latest Scans</Nav.Link>
             <Nav.Link href="/top-scans">Top Scans</Nav.Link>
             <Nav.Link href="/">Graphs</Nav.Link>
+            <LoginThing />
           </Nav>
         </Col>
 
