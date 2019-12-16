@@ -14,3 +14,9 @@ resources:
   requests:
     cpu: 0.01
     memory: 16Mi
+
+config:
+  env:
+    OAUTH_CLIENT_ID: Jn7nzWMOdZ1BZC4WhoIrvHk4bey46eUl
+    OAUTH_ISSUER: fscker-public.eu.auth0.com
+    OAUTH_AUDIENCE: snacker-tracker-reporter
