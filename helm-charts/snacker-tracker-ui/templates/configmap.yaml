@@ -1,0 +1,12 @@
+apiVapiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "snacker-tracker-ui.fullname" . }}
+  labels:
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+{{ include "snacker-tracker-ui.labels" . | indent 4 }}
+
+
+data:
+  config.js: |
+    const CONFIG = {{ toJson .Values.config.env | indent 4 }}

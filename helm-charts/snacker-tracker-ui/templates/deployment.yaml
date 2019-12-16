@@ -22,10 +22,20 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "snacker-tracker-ui.fullname" . }}
+            items:
+            - key: config.js
+              path: config.js
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/share/nginx/html/config/
           ports:
             - name: http
               containerPort: 80
