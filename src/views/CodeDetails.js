@@ -18,7 +18,7 @@ class CodeDetails extends Component {
 
     const tokenProvider = this.props.auth.getTokenSilently
 
-    const client = new API('https://reporter.snacker-tracker.qa.k8s.fscker.org/v1', {token: tokenProvider})
+    const client = new API(this.props.config.REPORTER_URL, {token: tokenProvider})
 
 
     const response = await client.GetCode(this.props.match.params.code)

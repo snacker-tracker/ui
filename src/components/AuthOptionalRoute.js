@@ -2,12 +2,13 @@ import React from "react"
 import PropTypes from "prop-types"
 import { Route } from "react-router-dom"
 import { useAuth0 } from "../react-auth0-spa"
+import Config from '../Config'
 
 const AuthOptionalRoute = ({ component: Component, path, ...rest }) => {
   const { isAuthenticated, getTokenSilently } = useAuth0()
 
   const render = (props) => {
-    return <Component {...props} auth={{isAuthenticated, getTokenSilently}} />
+    return <Component {...props} config={Config} auth={{isAuthenticated, getTokenSilently}} />
   }
 
   return <Route path={path} render={render} {...rest} />

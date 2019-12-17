@@ -20,3 +20,4 @@ config:
     OAUTH_CLIENT_ID: Jn7nzWMOdZ1BZC4WhoIrvHk4bey46eUl
     OAUTH_ISSUER: fscker-public.eu.auth0.com
     OAUTH_AUDIENCE: snacker-tracker-reporter
+    REPORTER_URL: https://reporter.snacker-tracker.prod.k8s.fscker.org/v1

@@ -23,7 +23,7 @@ class LastScans extends Component {
       }
     }
 
-    const client = new API('https://reporter.snacker-tracker.qa.k8s.fscker.org/v1', options)
+    const client = new API(this.props.config.REPORTER_URL, options)
 
     let scans = await client.ListScans()
     let codes = await client.ListCodes()
