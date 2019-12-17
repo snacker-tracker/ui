@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react"
 
 import { Row, Col } from "react-bootstrap"
 import { NavLink } from "react-router-dom"
+import dayjs from 'dayjs'
 
 import API from '../lib/API'
 
@@ -56,7 +57,7 @@ class LastScans extends Component {
               {codes[s.code] || "UNKNOWN"}
             </Col>
             <Col>
-              {s.scanned_at}
+              {dayjs(s.scanned_at).format('YYYY/MM/DD HH:mm:ss')}
             </Col>
           </Row>
         )
