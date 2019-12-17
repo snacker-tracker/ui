@@ -4,6 +4,8 @@ class API {
 
     if(options.token) {
       this.setToken(options.token)
+    } else {
+      this.setToken(false)
     }
   }
 
@@ -58,9 +60,8 @@ class API {
     let token
     if(this.token) {
       token = await this.getToken()
+      req.headers['Authorization'] = `Bearer ${token}`
     }
-
-    req.headers['Authorization'] = `Bearer ${token}`
 
     return await fetch(url, req)
   }
