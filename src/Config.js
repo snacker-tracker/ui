@@ -9,4 +9,6 @@ const Config = {
   ...CONFIG,
 }
 
+console.log('EffectiveConfig', Config)
+
 export default Config
