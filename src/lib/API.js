@@ -34,6 +34,11 @@ class API {
     return response
   }
 
+  async GetCodePictures(code) {
+    const response = await this._get(`codes/${code}/pictures`)
+    return response
+  }
+
   _get(url, params = {}, options = {}) {
     const req = {
       method: 'GET', // *GET, POST, PUT, DELETE, etc.

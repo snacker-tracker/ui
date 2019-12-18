@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 //import Loading from "../components/Loading";
 
-import { Container } from "react-bootstrap";
+import { Container, Image } from "react-bootstrap";
 
 import API from '../lib/API'
 
@@ -11,7 +11,8 @@ class CodeDetails extends Component {
     super(props)
 
     this.state = {
-      code: false
+      code: false,
+      pictures: []
     }
   }
   async componentDidMount() {
@@ -21,18 +22,27 @@ class CodeDetails extends Component {
     const client = new API(this.props.config.REPORTER_URL, {token: tokenProvider})
 
 
-    const response = await client.GetCode(this.props.match.params.code)
-    const code = await response.json()
+    const code_response = await client.GetCode(this.props.match.params.code)
+    const code = await code_response.json()
 
-    this.setState({code})
+    const pictures_response = await client.GetCodePictures(this.props.match.params.code)
+    const pictures = await pictures_response.json()
+
+    this.setState({code, pictures: pictures.items})
   }
 
   render() {
     return (
       <Container>
         <pre>
-        {this.state.code && (JSON.stringify(this.state.code, null, 2))}
+        {this.state.code && (JSON.stringify(this.state, null, 2))}
         </pre>
+
+        {this.state.pictures.map( p => {
+          return (
+            <Image src={p.url} rounded />
+          )
+        })}
       </Container>
     )
   }
