@@ -2,16 +2,12 @@ import React, { Component, Fragment } from "react"
 
 import { Row, Col } from "react-bootstrap"
 import { NavLink } from "react-router-dom"
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 
 import Tooltip from 'react-bootstrap/Tooltip'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 
 
 import API from '../lib/API'
-
-dayjs.extend(relativeTime)
 
 class LastScans extends Component {
   constructor(props) {
@@ -33,7 +29,7 @@ class LastScans extends Component {
 
     const client = new API(this.props.config.REPORTER_URL, options)
 
-    let scans = await client.ListScans()
+    let scans = await client.GetTopScans()
     let codes = await client.ListCodes()
 
     codes = (await codes.json()).items
@@ -61,13 +57,17 @@ class LastScans extends Component {
         return (
           <Row key={i} className={["d-flex", "scan-row", i % 2 === 0 ? "odd" : "even"] }>
             <Col>
+              {s.count}
+            </Col>
+
+            <Col>
               <NavLink to={"/codes/" + s.code }>{s.code}</NavLink>
             </Col>
             <Col>
               {codes[s.code] || "UNKNOWN"}
             </Col>
             <Col>
-              {dayjs(s.scanned_at).fromNow()} ({dayjs(s.scanned_at).format('YYYY/MM/DD HH:mm:ss')})
+              {s.last_scan} / {s.first_scan}
             </Col>
           </Row>
         )
@@ -76,6 +76,10 @@ class LastScans extends Component {
     return (
       <Fragment>
         <Row>
+          <Col className="d-none d-sm-block">
+            Scan Count
+          </Col>
+
           <Col className="d-none d-sm-block">
             Code
           </Col>

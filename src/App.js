@@ -9,7 +9,8 @@ import NavBar from "./components/NavBar"
 import Home from "./views/Home"
 import Profile from "./views/Profile"
 import CodeDetails from "./views/CodeDetails"
-import LastScansTable from "./views/LastScans"
+import LastScans from "./views/LastScans"
+import TopScans from "./views/TopScans"
 import { useAuth0 } from "./react-auth0-spa"
 import history from "./utils/history"
 
@@ -30,8 +31,8 @@ const App = () => {
         <Container className="flex-grow-1 mt-5">
           <Switch>
             <AuthOptionalRoute path="/" exact component={Home} />
-            <AuthOptionalRoute path="/last-scans" exact component={LastScansTable} />
-            <AuthOptionalRoute path="/top-scans" exact component={Home} />
+            <AuthOptionalRoute path="/last-scans" exact component={LastScans} />
+            <AuthOptionalRoute path="/top-scans" exact component={TopScans} />
             <AuthOptionalRoute path="/codes/:code" component={CodeDetails} />
             <PrivateRoute path="/profile" component={Profile} />
           </Switch>

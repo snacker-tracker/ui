@@ -29,6 +29,10 @@ class API {
     return await this._get(`codes`)
   }
 
+  async GetTopScans() {
+    return await this._get(`stats/top-scans`)
+  }
+
   async GetCode(code) {
     const response = await this._get(`codes/${code}`)
     return response
