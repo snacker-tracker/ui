@@ -16,10 +16,13 @@ class CodeDetails extends Component {
     }
   }
   async componentDidMount() {
+    const options = {}
 
-    const tokenProvider = this.props.auth.getTokenSilently
+    if(this.props.auth.isAuthenticated) {
+      options.token = this.props.auth.getTokenSilently
+    }
 
-    const client = new API(this.props.config.REPORTER_URL, {token: tokenProvider})
+    const client = new API(this.props.config.REPORTER_URL, options)
 
 
     const code_response = await client.GetCode(this.props.match.params.code)
@@ -38,7 +41,7 @@ class CodeDetails extends Component {
         {this.state.code && (JSON.stringify(this.state, null, 2))}
         </pre>
 
-        {this.state.pictures.map( p => {
+        {this.state.pictures && this.state.pictures.map( p => {
           return (
             <Image src={p.url} rounded />
           )
