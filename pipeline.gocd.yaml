@@ -174,7 +174,6 @@ pipelines:
       PROJECT: snacker-tracker
     stages:
       - deploy:
-          approval: manual
           jobs:
             helm-upgrade:
               tasks:
