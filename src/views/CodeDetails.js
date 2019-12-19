@@ -43,7 +43,7 @@ class CodeDetails extends Component {
 
         {this.state.pictures && this.state.pictures.map( p => {
           return (
-            <Image src={p.url} rounded />
+            <Image key={p.id} src={p.url} rounded />
           )
         })}
       </Container>
