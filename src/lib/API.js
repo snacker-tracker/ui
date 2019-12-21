@@ -1,6 +1,6 @@
 class API {
   constructor(base, options = {}) {
-    this.base = base
+    this.base = new URL(base + "/")
 
     if(options.token) {
       this.setToken(options.token)
@@ -29,8 +29,8 @@ class API {
     return await this._get(`codes`)
   }
 
-  async GetTopScans() {
-    return await this._get(`stats/top-scans`)
+  async GetTopScans(args = {}) {
+    return await this._get(`stats/top-scans`, args)
   }
 
   async GetCode(code) {
@@ -51,11 +51,18 @@ class API {
       }
     }
 
+    const path = new URL(url, this.base)
+
+    if(Object.keys(params).length > 0) {
+      for( var p of Object.entries(params)) {
+        path.searchParams.append(p[0], p[1])
+      }
+    }
+
     return this._request(
-      `${this.base}/${url}`,
+      path,
       req
     )
-
   }
 
   _post() {

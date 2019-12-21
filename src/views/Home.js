@@ -1,10 +1,12 @@
 import React, { Fragment, Component } from "react"
 
+import API from '../lib/API'
+
 import CanvasJSReact from '../lib/canvasjs.react'
 const  CanvasJSChart = CanvasJSReact.CanvasJSChart
 const  CanvasJS = CanvasJSReact.CanvasJS
 
-class BarChart extends Component {
+class TopScansGraph extends Component {
   addSymbols(e){
     var suffixes = ["", "K", "M", "B"]
     var order = Math.max(Math.floor(Math.log(e.value) / Math.log(1000)), 0)
@@ -13,38 +15,42 @@ class BarChart extends Component {
     var suffix = suffixes[order]
     return CanvasJS.formatNumber(e.value / Math.pow(1000, order)) + suffix
   }
+
+  componentDidMount() {
+    console.log(this.props)
+  }
+
   render() {
+    const dp = this.props.topscans.map( topscan => {
+      return {
+        y: topscan.count,
+        label: this.props.codes[topscan.code] || "UNKNOWN"
+      }
+    })
+
+    console.log(dp)
+
+
+
     const options = {
       animationEnabled: true,
       theme: "light2",
-      title:{
-        text: "Most Popular Social Networking Sites"
-      },
       axisX: {
-        title: "Social Network",
+        title: "Product",
         reversed: true,
       },
       axisY: {
-        title: "Monthly Active Users",
-        labelFormatter: this.addSymbols
+        title: "Scan Count",
       },
       data: [{
         type: "bar",
-        dataPoints: [
-          { y:  2200000000, label: "Facebook" },
-          { y:  1800000000, label: "YouTube" },
-          { y:  800000000, label: "Instagram" },
-          { y:  563000000, label: "Qzone" },
-          { y:  376000000, label: "Weibo" },
-          { y:  336000000, label: "Twitter" },
-          { y:  330000000, label: "Reddit" }
-        ]
+        dataPoints: dp
       }]
     }
 
     return (
     <div>
-      <h1>React Bar Chart</h1>
+      <h1>Top 10 Scans</h1>
       <CanvasJSChart options = {options}
         /* onRef={ref => this.chart = ref} */
       />
@@ -58,10 +64,54 @@ class BarChart extends Component {
     <Content />
 */
 
-const Home = () => (
-  <Fragment>
-    <BarChart />
-  </Fragment>
-)
+class Home extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      code: false,
+      scans: false
+    }
+  }
+  async componentDidMount() {
+    let options = {}
+    if(this.props.auth.isAuthenticated) {
+      options = {
+        token: this.props.auth.getTokenSilently
+      }
+    }
+
+    this.setState({scans: false, codes: false})
+
+    const client = new API(this.props.config.REPORTER_URL, options)
+
+    let scans = await client.GetTopScans({limit: 10})
+    let codes = await client.ListCodes()
+
+    codes = (await codes.json()).items
+    scans = (await scans.json()).items
+
+    const codes_hash = {}
+
+    for(const code of codes) {
+      codes_hash[code.code] = code.name
+    }
+
+
+    this.setState({scans, codes: codes_hash})
+  }
+
+  render() {
+    if(!this.state.scans || !this.state.codes) {
+      return ("...")
+    } else {
+      return (
+        <Fragment>
+          <TopScansGraph codes={this.state.codes} topscans={this.state.scans} />
+        </Fragment>
+      )
+    }
+  }
+}
 
 export default Home;
