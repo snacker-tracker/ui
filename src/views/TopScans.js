@@ -3,10 +3,6 @@ import React, { Component, Fragment } from "react"
 import { Row, Col } from "react-bootstrap"
 import { NavLink } from "react-router-dom"
 
-import Tooltip from 'react-bootstrap/Tooltip'
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
-
-
 import API from '../lib/API'
 
 class LastScans extends Component {

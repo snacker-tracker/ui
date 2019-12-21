@@ -5,10 +5,6 @@ import { NavLink } from "react-router-dom"
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
-import Tooltip from 'react-bootstrap/Tooltip'
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
-
-
 import API from '../lib/API'
 
 dayjs.extend(relativeTime)

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 //import Loading from "../components/Loading";
 
-import { Container, Image } from "react-bootstrap";
+import { Container, Image, Row, Col } from "react-bootstrap";
 
 import API from '../lib/API'
 
@@ -37,15 +37,30 @@ class CodeDetails extends Component {
   render() {
     return (
       <Container>
+        <h1>{this.state.code && (this.state.code.name)}</h1>
+        <Row>
+          <Col md="3">
+              <Row>
+                <Col>
+                  {this.state.pictures && this.state.pictures.map( p => {
+                    return (
+                      <Image key={p.id} src={p.url} rounded />
+                    )
+                  })}
+                </Col>
+              </Row>
+          </Col>
+
+          <Col>
+            <Container>
+              ...
+            </Container>
+          </Col>
+        </Row>
+
         <pre>
-        {this.state.code && (JSON.stringify(this.state, null, 2))}
         </pre>
 
-        {this.state.pictures && this.state.pictures.map( p => {
-          return (
-            <Image key={p.id} src={p.url} rounded />
-          )
-        })}
       </Container>
     )
   }
