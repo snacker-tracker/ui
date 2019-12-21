@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 
+import queryString from 'query-string'
+
 //import Loading from "../components/Loading";
 
 import { Container, Image, Row, Col } from "react-bootstrap";
@@ -8,7 +10,6 @@ import API from '../lib/API'
 
 import CanvasJSReact from '../lib/canvasjs.react'
 const  CanvasJSChart = CanvasJSReact.CanvasJSChart
-const  CanvasJS = CanvasJSReact.CanvasJS
 
 class ScanCountGraph extends Component {
   render() {
@@ -48,14 +49,27 @@ class CodeDetails extends Component {
   constructor(props) {
     super(props)
 
+    console.log(props)
+
     this.state = {
       code: false,
       pictures: [],
-      counts: []
+      counts: [],
+      period: 'daily',
+      period_map: {
+        daily: 'date',
+        hourly: 'hour',
+        weekdaily: 'weekday',
+      }
     }
   }
+
+
   async componentDidMount() {
     const options = {}
+
+    const query = queryString.parse(this.props.location.search)
+    const period = query.period || 'daily'
 
     if(this.props.auth.isAuthenticated) {
       options.token = this.props.auth.getTokenSilently
@@ -67,15 +81,14 @@ class CodeDetails extends Component {
     const code_response = await client.GetCode(this.props.match.params.code)
     const code = await code_response.json()
 
-    const counts_response = await client.GetCodeScanCounts(this.props.match.params.code, 'weekdaily')
+    const counts_response = await client.GetCodeScanCounts(this.props.match.params.code, period)
     const counts = await counts_response.json()
     counts.items.reverse()
-
 
     const pictures_response = await client.GetCodePictures(this.props.match.params.code)
     const pictures = await pictures_response.json()
 
-    this.setState({code, pictures: pictures.items, counts: counts.items})
+    this.setState({code, pictures: pictures.items, counts: counts.items, period})
   }
 
   render() {
@@ -97,7 +110,7 @@ class CodeDetails extends Component {
 
           <Col>
             <Container>
-              {this.state.counts && (<ScanCountGraph counts={this.state.counts} period="weekday" />)}
+              {this.state.counts && (<ScanCountGraph counts={this.state.counts} period={this.state.period_map[this.state.period]} />)}
             </Container>
           </Col>
         </Row>
