@@ -6,13 +6,52 @@ import { Container, Image, Row, Col } from "react-bootstrap";
 
 import API from '../lib/API'
 
+import CanvasJSReact from '../lib/canvasjs.react'
+const  CanvasJSChart = CanvasJSReact.CanvasJSChart
+const  CanvasJS = CanvasJSReact.CanvasJS
+
+class ScanCountGraph extends Component {
+  render() {
+    const dp = this.props.counts.map( count => {
+      return {
+        y: count.count,
+        label: count[this.props.period]
+      }
+    })
+
+    const options = {
+      animationEnabled: true,
+      theme: "light2",
+      axisX: {
+        title: this.props.period,
+        reversed: true,
+      },
+      axisY: {
+        title: "Scan Count",
+      },
+      data: [{
+        type: "column",
+        dataPoints: dp
+      }]
+    }
+
+    return (
+      <CanvasJSChart options = {options}
+        /* onRef={ref => this.chart = ref} */
+      />
+    )
+  }
+}
+
+
 class CodeDetails extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
       code: false,
-      pictures: []
+      pictures: [],
+      counts: []
     }
   }
   async componentDidMount() {
@@ -28,10 +67,15 @@ class CodeDetails extends Component {
     const code_response = await client.GetCode(this.props.match.params.code)
     const code = await code_response.json()
 
+    const counts_response = await client.GetCodeScanCounts(this.props.match.params.code, 'weekdaily')
+    const counts = await counts_response.json()
+    counts.items.reverse()
+
+
     const pictures_response = await client.GetCodePictures(this.props.match.params.code)
     const pictures = await pictures_response.json()
 
-    this.setState({code, pictures: pictures.items})
+    this.setState({code, pictures: pictures.items, counts: counts.items})
   }
 
   render() {
@@ -53,14 +97,10 @@ class CodeDetails extends Component {
 
           <Col>
             <Container>
-              ...
+              {this.state.counts && (<ScanCountGraph counts={this.state.counts} period="weekday" />)}
             </Container>
           </Col>
         </Row>
-
-        <pre>
-        </pre>
-
       </Container>
     )
   }

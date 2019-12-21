@@ -29,6 +29,10 @@ class API {
     return await this._get(`codes`)
   }
 
+  async GetCodeScanCounts(code, period) {
+    return await this._get(`stats/scan-counts/${code}`, {period})
+  }
+
   async GetTopScans(args = {}) {
     return await this._get(`stats/top-scans`, args)
   }
