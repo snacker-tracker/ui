@@ -4,7 +4,8 @@ import queryString from 'query-string'
 
 //import Loading from "../components/Loading";
 
-import { Container, Image, Row, Col } from "react-bootstrap";
+import { Container, Image, Row, Col } from "react-bootstrap"
+import { NavLink } from 'react-router-dom'
 
 import API from '../lib/API'
 
@@ -13,10 +14,15 @@ const  CanvasJSChart = CanvasJSReact.CanvasJSChart
 
 class ScanCountGraph extends Component {
   render() {
+    const key = {
+      'daily': 'date',
+      'weekdaily': 'weekday',
+      'hourly': 'hour'
+    }[this.props.period]
     const dp = this.props.counts.map( count => {
       return {
         y: count.count,
-        label: count[this.props.period]
+        label: count[key]
       }
     })
 
@@ -25,7 +31,6 @@ class ScanCountGraph extends Component {
       theme: "light2",
       axisX: {
         title: this.props.period,
-        reversed: true,
       },
       axisY: {
         title: "Scan Count",
@@ -44,30 +49,54 @@ class ScanCountGraph extends Component {
   }
 }
 
-
 class CodeDetails extends Component {
   constructor(props) {
     super(props)
 
+    const query = queryString.parse(this.props.location.search)
+
     this.state = {
-      code: false,
-      pictures: [],
       counts: [],
-      period: 'daily',
-      period_map: {
-        daily: 'date',
-        hourly: 'hour',
-        weekdaily: 'weekday',
-      }
+      period: query.period || 'daily'
     }
   }
 
+  componentDidMount() {
+    this.load()
+    this.loadGraph(this.state.period)
+  }
 
-  async componentDidMount() {
-    const options = {}
-
+  componentDidUpdate(previousProps, previousState) {
     const query = queryString.parse(this.props.location.search)
     const period = query.period || 'daily'
+    if(period !== previousState.period) {
+      this.setState({period: query.period})
+      this.loadGraph(period)
+    }
+  }
+
+  async loadGraph(period) {
+    const options = {}
+    if(this.props.auth.isAuthenticated) {
+      options.token = this.props.auth.getTokenSilently
+    }
+
+    const client = new API(this.props.config.REPORTER_URL, options)
+    const counts_response = await client.GetCodeScanCounts(this.props.match.params.code, period)
+    const counts = await counts_response.json()
+
+    if(period === 'hourly') {
+      counts.items = counts.items.map( point => {
+        point['hour'] = (point['hour'] - (new Date().getTimezoneOffset() / 60))
+        return point
+      })
+    }
+
+    this.setState({counts, period})
+  }
+
+  async load() {
+    const options = {}
 
     if(this.props.auth.isAuthenticated) {
       options.token = this.props.auth.getTokenSilently
@@ -79,21 +108,14 @@ class CodeDetails extends Component {
     const code_response = await client.GetCode(this.props.match.params.code)
     const code = await code_response.json()
 
-    const counts_response = await client.GetCodeScanCounts(this.props.match.params.code, period)
-    const counts = await counts_response.json()
-    counts.items.reverse()
-
-    if(period === 'hourly') {
-      counts.items = counts.items.map( point => {
-        point['hour'] = (point['hour'] - (new Date().getTimezoneOffset() / 60))
-        return point
-      })
-    }
-
     const pictures_response = await client.GetCodePictures(this.props.match.params.code)
     const pictures = await pictures_response.json()
 
-    this.setState({code, pictures: pictures.items, counts: counts.items, period})
+    this.setState({code, pictures: pictures.items})
+  }
+
+  makeGraphLink(period) {
+    return this.props.location.pathname + "?period=" + period
   }
 
   render() {
@@ -115,8 +137,10 @@ class CodeDetails extends Component {
 
           <Col>
             <Container>
-              {this.state.counts && (<ScanCountGraph counts={this.state.counts} period={this.state.period_map[this.state.period]} />)}
+              {this.state.counts.length > 0 && (<ScanCountGraph counts={this.state.counts} period={this.state.period_map[this.state.period]} />)}
+              <NavLink to={this.makeGraphLink('hourly')}>Hourly</NavLink> | <NavLink to={this.makeGraphLink('weekdaily')}>Weekday</NavLink> | <NavLink to={this.makeGraphLink('daily')}>Daily</NavLink>
             </Container>
+            <ScanCountGraph period={queryString.parse(this.props.location.search).period || 'daily'} counts={this.state.counts.items || []} />
           </Col>
         </Row>
       </Container>
