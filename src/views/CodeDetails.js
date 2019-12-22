@@ -49,8 +49,6 @@ class CodeDetails extends Component {
   constructor(props) {
     super(props)
 
-    console.log(props)
-
     this.state = {
       code: false,
       pictures: [],
@@ -84,6 +82,13 @@ class CodeDetails extends Component {
     const counts_response = await client.GetCodeScanCounts(this.props.match.params.code, period)
     const counts = await counts_response.json()
     counts.items.reverse()
+
+    if(period === 'hourly') {
+      counts.items = counts.items.map( point => {
+        point['hour'] = (point['hour'] - (new Date().getTimezoneOffset() / 60))
+        return point
+      })
+    }
 
     const pictures_response = await client.GetCodePictures(this.props.match.params.code)
     const pictures = await pictures_response.json()
