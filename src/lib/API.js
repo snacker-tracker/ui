@@ -21,12 +21,19 @@ class API {
     this.token = token
   }
 
-  async ListScans() {
-    return await this._get(`scans`)
+  async ListScans(options = {}) {
+    options = {
+      ...options
+    }
+    return await this._get(`scans`, options)
   }
 
-  async ListCodes() {
-    return await this._get(`codes`)
+  async ListCodes(options = {}) {
+    options = {
+      ...options
+    }
+
+    return await this._get(`codes`, options)
   }
 
   async GetCodeScanCounts(code, period) {
