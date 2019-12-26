@@ -7,19 +7,6 @@ const  CanvasJSChart = CanvasJSReact.CanvasJSChart
 const  CanvasJS = CanvasJSReact.CanvasJS
 
 class TopScansGraph extends Component {
-  addSymbols(e){
-    var suffixes = ["", "K", "M", "B"]
-    var order = Math.max(Math.floor(Math.log(e.value) / Math.log(1000)), 0)
-    if(order > suffixes.length - 1)
-      order = suffixes.length - 1
-    var suffix = suffixes[order]
-    return CanvasJS.formatNumber(e.value / Math.pow(1000, order)) + suffix
-  }
-
-  componentDidMount() {
-    console.log(this.props)
-  }
-
   render() {
     const dp = this.props.topscans.map( topscan => {
       return {
@@ -27,10 +14,6 @@ class TopScansGraph extends Component {
         label: this.props.codes[topscan.code] || "UNKNOWN"
       }
     })
-
-    console.log(dp)
-
-
 
     const options = {
       animationEnabled: true,
@@ -86,7 +69,7 @@ class Home extends React.Component {
     const client = new API(this.props.config.REPORTER_URL, options)
 
     let scans = await client.GetTopScans({limit: 10})
-    let codes = await client.ListCodes()
+    let codes = await client.ListCodes({limit: 150})
 
     codes = (await codes.json()).items
     scans = (await scans.json()).items
