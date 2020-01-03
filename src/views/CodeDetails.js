@@ -4,7 +4,7 @@ import queryString from 'query-string'
 
 //import Loading from "../components/Loading";
 
-import { Container, Image, Row, Col } from "react-bootstrap"
+import { Badge, Container, Image, Row, Col } from "react-bootstrap"
 import { NavLink } from 'react-router-dom'
 
 import API from '../lib/API'
@@ -122,6 +122,11 @@ class CodeDetails extends Component {
     return (
       <Container>
         <h1>{this.state.code && (this.state.code.name)}</h1>
+        <Row>
+          {this.state.code && this.state.code.categories && this.state.code.categories.map( category => {
+            return (<Badge variant="secondary">{category}</Badge>)
+          })}
+        </Row>
         <Row>
           <Col md="3">
               <Row>

@@ -4,7 +4,6 @@ import API from '../lib/API'
 
 import CanvasJSReact from '../lib/canvasjs.react'
 const  CanvasJSChart = CanvasJSReact.CanvasJSChart
-const  CanvasJS = CanvasJSReact.CanvasJS
 
 class TopScansGraph extends Component {
   render() {
