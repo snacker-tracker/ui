@@ -36,6 +36,10 @@ class API {
     return await this._get(`codes`, options)
   }
 
+  async ListCategories(options = {}) {
+    return await this._get(`categories/`)
+  }
+
   async GetCodeScanCounts(code, period) {
     return await this._get(`stats/scan-counts/${code}`, {period})
   }

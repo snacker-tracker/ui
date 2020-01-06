@@ -44,6 +44,7 @@ const NavBar = () => {
         <Nav className="mr-auto">
           <Nav.Link to="/top-scans" as={NavLink}>Top Scans</Nav.Link>
           <Nav.Link to="/last-scans" as={NavLink}>Last Scans</Nav.Link>
+          <Nav.Link to="/categories" as={NavLink}>Categories</Nav.Link>
         </Nav>
 
         {!isAuthenticated && (

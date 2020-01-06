@@ -12,6 +12,12 @@ import API from '../lib/API'
 import CanvasJSReact from '../lib/canvasjs.react'
 const  CanvasJSChart = CanvasJSReact.CanvasJSChart
 
+const BadgeLink = (props) => {
+  return (
+    <NavLink key={props.to} to={props.to}><Badge>{props.category}</Badge></NavLink>
+  )
+}
+
 class ScanCountGraph extends Component {
   render() {
     const key = {
@@ -57,7 +63,8 @@ class CodeDetails extends Component {
 
     this.state = {
       counts: [],
-      period: query.period || 'daily'
+      period: query.period || 'daily',
+      badges: []
     }
   }
 
@@ -111,7 +118,16 @@ class CodeDetails extends Component {
     const pictures_response = await client.GetCodePictures(this.props.match.params.code)
     const pictures = await pictures_response.json()
 
-    this.setState({code, pictures: pictures.items})
+    const badges = []
+    const parents = []
+    if(code.categories) {
+      for(const category of code.categories) {
+        badges.push((<BadgeLink to={["categories", parents.concat([category]).join('.')].join('/')} category={category} />))
+        parents.push(category)
+      }
+    }
+
+    this.setState({code, pictures: pictures.items, badges})
   }
 
   makeGraphLink(period) {
@@ -119,12 +135,13 @@ class CodeDetails extends Component {
   }
 
   render() {
+
     return (
       <Container>
         <h1>{this.state.code && (this.state.code.name)}</h1>
         <Row>
-          {this.state.code && this.state.code.categories && this.state.code.categories.map( category => {
-            return (<Badge variant="secondary">{category}</Badge>)
+          {this.state.badges && this.state.badges.map( badge => {
+            return badge
           })}
         </Row>
         <Row>

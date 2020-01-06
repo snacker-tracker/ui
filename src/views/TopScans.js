@@ -43,7 +43,10 @@ class LastScans extends Component {
 
       // build a hash of [code] = name
       const codes = this.state.codes.reduce( (accumulator, current) => {
-        accumulator[current.code] = current.name
+        accumulator[current.code] = {
+          name: current.name,
+          categories: current.categories
+        }
         return accumulator
       }, {})
 
@@ -60,7 +63,8 @@ class LastScans extends Component {
               <NavLink to={"/codes/" + s.code }>{s.code}</NavLink>
             </Col>
             <Col>
-              {codes[s.code] || "UNKNOWN"}
+              {codes[s.code] && codes[s.code].name || "UNKNOWN"}
+              {codes[s.code] && codes[s.code].categories.length > 0 ? "*" : ""}
             </Col>
             <Col>
               {s.last_scan} / {s.first_scan}

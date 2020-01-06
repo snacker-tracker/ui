@@ -11,6 +11,8 @@ import Profile from "./views/Profile"
 import CodeDetails from "./views/CodeDetails"
 import LastScans from "./views/LastScans"
 import TopScans from "./views/TopScans"
+import CategoriesView from "./views/Categories"
+import CategoryView from "./views/Category"
 import { useAuth0 } from "./react-auth0-spa"
 import history from "./utils/history"
 
@@ -34,6 +36,8 @@ const App = () => {
             <AuthOptionalRoute path="/last-scans" exact component={LastScans} />
             <AuthOptionalRoute path="/top-scans" exact component={TopScans} />
             <AuthOptionalRoute path="/codes/:code" component={CodeDetails} />
+            <AuthOptionalRoute path="/categories" exact component={CategoriesView} />
+            <AuthOptionalRoute path="/categories/:category" component={CategoryView} />
             <PrivateRoute path="/profile" component={Profile} />
           </Switch>
         </Container>
