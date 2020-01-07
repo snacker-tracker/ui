@@ -63,7 +63,7 @@ class LastScans extends Component {
               <NavLink to={"/codes/" + s.code }>{s.code}</NavLink>
             </Col>
             <Col>
-              {codes[s.code] && codes[s.code].name || "UNKNOWN"}
+              {codes[s.code] && (codes[s.code].name || "UNKNOWN")}
               {codes[s.code] && codes[s.code].categories.length > 0 ? "*" : ""}
             </Col>
             <Col>
