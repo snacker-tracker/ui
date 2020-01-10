@@ -17,7 +17,7 @@ class TopScansGraph extends Component {
     const dp = this.props.topscans.map( topscan => {
       return {
         y: topscan.count,
-        label: this.props.codes[topscan.code] || "UNKNOWN"
+        label: this.props.codes[topscan.code] || topscan.code
       }
     })
 
