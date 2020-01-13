@@ -118,7 +118,7 @@ class Home extends React.Component {
     this.setState({scans})
 
     if(!this.state.codes) {
-      let codes = await client.ListCodes({limit: 150})
+      let codes = await client.ListCodes({limit: 200})
       codes = (await codes.json()).items
       const codes_hash = {}
 
