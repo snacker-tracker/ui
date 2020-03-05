@@ -26,7 +26,7 @@ class LastScans extends Component {
     const client = new API(this.props.config.REPORTER_URL, options)
 
     let scans = await client.GetTopScans()
-    let codes = await client.ListCodes({limit: 300})
+    let codes = await client.ListCodes({limit: 500})
 
     codes = (await codes.json()).items
     scans = (await scans.json()).items
