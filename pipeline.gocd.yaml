@@ -34,54 +34,63 @@ pipelines:
       IMAGE: snacker-tracker/ui
       CHART_NAME: snacker-tracker-ui
       PROJECT: snacker-tracker
+      GO_AUTOMATION_USER: automaton
+      GITHUB_AUTOMATION_USER: gocd-service-account
+    secure_variables:
+      GO_AUTOMATION_PASSWORD: "AES:+heX4S6WsUXSqPxj5nNOoQ==:9jXtfK+GoUYDpS7mvGGWmA=="
+      GITHUB_AUTOMATION_PASSWORD: "AES:COGz3KIPEuFOsaCmbTHjlA==:6aivxs5PQyswiBSWgfZ8Q+1MxwKWnV14g5944GDXWMWwWfgBEmCqAX+rvwOnS54q"
     stages:
       - tests:
           jobs:
-            tests:
-              tasks:
-                - script: |
-                    exit 0
-
-                    ./auto/clean-up
-
-                    set -e
-
-                    ./auto/test
-
-#              artifacts:
-#                - test:
-#                    source: coverage/
-
-            lint:
-              tasks:
-                - script: |
-                    exit 0
-                    ./auto/clean-up
-
-                    set -e
-
-                    ./auto/lint
-
             audit:
               tasks:
                 - script: |
-                    ##AUDIT_RESULT="$(./auto/yarn audit)"
-                    AUDIT_RESULT="$(docker run -v `pwd`:/app/ -w /app/ node:10 yarn audit)"
-                    set -e
+                    bash auto/push-commit-status \
+                      snacker-tracker/ui \
+                      ${GO_SCM_GIT_SNACKER_TRACKER_UI_LABEL} \
+                      "pending" "Build is running"
 
-                    echo "$AUDIT_RESULT"
-
-                    if [ "$(echo $AUDIT_RESULT | grep High | wc -l)" -gt 0 ]; then
-                      exit 1
-                    fi
-
-            validate-swagger:
-              tasks:
                 - script: |
-                    set -e
-                    exit 0
+                    ./auto/clean-up || true
+                - script: |
+                    function finish {
+                      EXIT_CODE=$?
+                      set +e
 
-                    ./auto/validate-swagger
+                      docker run -v `pwd`:/tmp/mount alpine chown -R $(id -u):$(id -g) /tmp/mount
+
+                      ./auto/clean-up || true
+
+                       [[ $EXIT_CODE = 0 ]] && GH_STATUS="success" || GH_STATUS="failure"
+
+                      bash auto/push-commit-status \
+                        snacker-tracker/ui \
+                        ${GO_SCM_GIT_SNACKER_TRACKER_UI_LABEL} \
+                        $GH_STATUS "${GH_STATUS_DESCRIPTION}"
+
+                      exit $EXIT_CODE
+                    }
+
+                    trap finish EXIT
+
+                    AUDIT_RESULT="$(docker run -v `pwd`:/app/ -w /app/ node:10 yarn audit --json --groups dependencies --level moderate)"
+                    export EXIT_CODE=$?
+
+                    set -e
+
+                    echo "$AUDIT_RESULT" | jq .
+
+                    DEPENDENCIES="$(echo "$AUDIT_RESULT" | jq .data.dependencies)"
+                    LOW="$(echo "$AUDIT_RESULT" | jq .data.vulnerabilities.low)"
+                    MODERATE="$(echo "$AUDIT_RESULT" | jq .data.vulnerabilities.moderate)"
+                    HIGH="$(echo "$AUDIT_RESULT" | jq .data.vulnerabilities.high)"
+                    CRITICAL="$(echo "$AUDIT_RESULT" | jq .data.vulnerabilities.critical)"
+
+                    export GH_STATUS_DESCRIPTION="$DEPENDENCIES dependencies - Low=$LOW Moderate=$MODERATE High=$HIGH Critical=$CRITICAL"
+
+                    echo "$GH_STATUS_DESCRIPTION"
+
+                    exit $EXIT_CODE
 
   snacker-tracker-ui-build:
     group: snacker-tracker-ui
