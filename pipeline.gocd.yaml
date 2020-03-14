@@ -14,14 +14,21 @@ common:
 pipelines:
   snacker-tracker-ui-test:
     group: snacker-tracker-ui
-    label_template: "${git[:8]}"
+    label_template: "${git-snacker-tracker-ui[:8]}"
     lock_behavior: unlockWhenFinished
     timer:
       spec: "* * * * * ? */15"
       only_on_changes: yes
     materials:
-      git:
-        type: configrepo
+      git-snacker-tracker-ui:
+        plugin_configuration:
+          id: git.fb
+          version: 1.3.5
+        options:
+          url: https://github.com/snacker-tracker/ui.git
+          branchwhitelist: master,test-*
+        destination: ./
+
     environment_variables:
       #REGISTRY: "DEFINED ON THE AGENT"
       IMAGE: snacker-tracker/ui
@@ -84,8 +91,15 @@ pipelines:
       upstream:
         pipeline: snacker-tracker-ui-test
         stage: tests
-      git:
-        type: configrepo
+      git-snacker-tracker-ui:
+        plugin_configuration:
+          id: git.fb
+          version: 1.3.5
+        options:
+          url: https://github.com/snacker-tracker/ui.git
+          branchwhitelist: master,test-*
+        destination: ./
+
     environment_variables:
       #REGISTRY: "DEFINED ON THE AGENT"
       IMAGE: snacker-tracker/ui
