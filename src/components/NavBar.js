@@ -12,12 +12,16 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import { useAuth0 } from "../react-auth0-spa";
 
 const NavBar = () => {
-  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  const { user, isAuthenticated, getTokenSilently, loginWithRedirect, logout } = useAuth0();
 
   const logoutWithRedirect = () =>
     logout({
       returnTo: window.location.origin
     });
+
+  (async () => {
+    await getTokenSilently()
+  })()
 
   /*
   const handleSubmit = event => {

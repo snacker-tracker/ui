@@ -3,7 +3,6 @@ import React, { Fragment, Component } from "react"
 import API from '../lib/API'
 import dayjs from 'dayjs'
 
-import Dropdown from 'react-bootstrap/Dropdown'
 import { NavLink } from 'react-router-dom'
 
 import queryString from 'query-string'
@@ -40,6 +39,7 @@ class TopScansGraph extends Component {
     return (
     <div>
       <h1>Top 10 Scans</h1>
+
       <CanvasJSChart options = {options}
         /* onRef={ref => this.chart = ref} */
       />

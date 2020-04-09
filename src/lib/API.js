@@ -44,6 +44,10 @@ class API {
     return await this._get(`stats/scan-counts/${code}`, {period})
   }
 
+  async GetGlobalScanCounts(period = 'daily') {
+    return await this._get(`stats/scan-counts/`, {period})
+  }
+
   async GetTopScans(options = {}) {
     return await this._get(`stats/top-scans`, options)
   }

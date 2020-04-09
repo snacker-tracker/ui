@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react"
 
-import { Row, Col, Badge } from "react-bootstrap"
+import { Row, Col } from "react-bootstrap"
 import { NavLink } from "react-router-dom"
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
