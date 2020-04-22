@@ -57,7 +57,7 @@ const NavBar = () => {
               id="qsLoginBtn"
               color="primary"
               className="btn-margin"
-              onClick={() => loginWithRedirect({login_hint: 'line'})}
+              onClick={() => loginWithRedirect({connection: 'line'})}
             >
               Log in (line)
             </Button>
@@ -66,7 +66,7 @@ const NavBar = () => {
               id="qsLoginBtn"
               color="primary"
               className="btn-margin"
-              onClick={() => loginWithRedirect({login_hint: 'facebook'})}
+              onClick={() => loginWithRedirect({connection: 'facebook'})}
             >
               Log in (fb)
             </Button>
