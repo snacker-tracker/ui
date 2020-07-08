@@ -20,7 +20,7 @@ service:
 ingress:
   enabled: false
   annotations:
-    cert-manager.io/cluster-issuer: lets-encrypy-prod
+    cert-manager.io/cluster-issuer: lets-encrypt-prod
   hosts:
     - host: chart-example.local
       paths: []
