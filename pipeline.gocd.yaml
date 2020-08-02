@@ -38,7 +38,7 @@ pipelines:
       GITHUB_AUTOMATION_USER: gocd-service-account
     secure_variables:
       GO_AUTOMATION_PASSWORD: "AES:+heX4S6WsUXSqPxj5nNOoQ==:9jXtfK+GoUYDpS7mvGGWmA=="
-      GITHUB_AUTOMATION_PASSWORD: "AES:COGz3KIPEuFOsaCmbTHjlA==:6aivxs5PQyswiBSWgfZ8Q+1MxwKWnV14g5944GDXWMWwWfgBEmCqAX+rvwOnS54q"
+      GITHUB_AUTOMATION_PASSWORD: "AES:EwOyEBf7z5d8VzVua75pEg==:LZhYZmLP7OR2Vf+NwirNlTCYCmptgbSRRqD3kWjjYlXxxCeSZGYyX07ZIcgMpfhV"
     stages:
       - tests:
           jobs:
