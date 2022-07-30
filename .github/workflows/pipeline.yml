@@ -1,0 +1,114 @@
+name: Pipeline
+on:
+  push: {}
+
+jobs:
+  test:
+    runs-on: self-hosted
+    name: Test
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: yarn
+
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: javascript
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: yarn
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v2
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      with:
+        cleanup-level: none
+        output: ./results/
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: sarif-files
+        path: results/*.sarif
+
+  trufflehog:
+    name: TruffleHog
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: TruffleHog OSS
+        uses: trufflesecurity/trufflehog@v3.4.3
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs:
+      - codeql
+      - trufflehog
+    steps:
+      - name: Dummy Task
+        run: |
+          echo "Just running something to say there was something to do"
+          echo "but there nothing to build or deploy"
+
+  deploy-dev:
+    name: Deploy in DEV
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: Deploy
+        run: |
+          echo "Just running something to say there was something to do"
+
+  deploy-staging:
+    name: Deploy in STAGING
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-dev
+    steps:
+      - name: Deploy
+        run: |
+          echo "Just running something to say there was something to do"
+
+  deploy-prod:
+    name: Deploy in PROD
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-staging
+    steps:
+      - name: Deploy
+        run: |
+          echo "Just running something to say there was something to do"
