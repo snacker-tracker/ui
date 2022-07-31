@@ -98,7 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     needs:
-      - deploy-dev
+      - deploy-qa
     steps:
       - name: Deploy
         run: |
