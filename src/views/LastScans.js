@@ -38,8 +38,6 @@ class LastScans extends Component {
     this.setState({scans, codes})
   }
 
-
-
   render() {
     let rows = null
     // if we've loaded data, essentially
@@ -65,10 +63,14 @@ class LastScans extends Component {
             <Col>
               {dayjs(s.scanned_at).fromNow()} ({dayjs(s.scanned_at).format('YYYY/MM/DD HH:mm:ss')})
             </Col>
+            <Col>
+              {s.location}
+            </Col>
           </Row>
         )
       })
     }
+
     return (
       <Fragment>
         <Row>
@@ -80,6 +82,9 @@ class LastScans extends Component {
           </Col>
           <Col className="d-none d-sm-block">
             Last Scanned
+          </Col>
+          <Col className="d-none d-sm-block">
+            Location
           </Col>
         </Row>
         {rows}

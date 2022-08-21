@@ -5,7 +5,8 @@ import dayjs from 'dayjs'
 
 import { NavLink } from 'react-router-dom'
 
-import queryString from 'query-string'
+import url from 'url'
+import { LocationContext } from '../lib/LocationContext'
 
 import CanvasJSReact from '../lib/canvasjs.react'
 
@@ -49,30 +50,38 @@ class TopScansGraph extends Component {
   }
 }
 
-/*
-    <Content />
-*/
-
 class Home extends React.Component {
   constructor(props) {
     super(props)
-    const query = queryString.parse(this.props.location.search)
+    const query = url.parse(this.props.location.search, true).query
 
     this.state = {
       code: false,
       scans: false,
-      period: query.period || 'all-time'
+      period: query.period || 'all-time',
+      location: null
     }
   }
 
-  componentDidUpdate(previousProps, previousState) {
-    const query = queryString.parse(this.props.location.search)
+  slugMappings = {
+      'this-week': ["This week", dayjs().startOf('week').toISOString()],
+      'last-7-days': ["Last 7 days", dayjs().subtract(7, 'day').toISOString()],
+      'this-month': ["This month", dayjs().startOf('month').toISOString()],
+      'last-30-days': ["Last 30 days", dayjs().subtract(30, 'day').toISOString()],
+      'year-to-date': ["Year to date", dayjs().startOf('year').toISOString()],
+      'all-time': ["All time", null]
+    }
+
+
+  componentDidUpdate(_previousProps, previousState) {
+    const query = url.parse(this.props.location.search, true).query
     const period = query.period || 'all-time'
     if(period !== previousState.period) {
       this.setState({period})
       this.load()
     }
   }
+
 
   async load() {
     let options = {}
@@ -82,33 +91,16 @@ class Home extends React.Component {
       }
     }
 
-    console.log(this.state.period)
-
     const opts = {}
-    switch(this.state.period) {
-      case 'this-week':
-        opts.from_date = dayjs().startOf('week').toISOString()
-        break
 
-      case 'last-7-days':
-        opts.from_date = dayjs().subtract(7, 'day').toISOString()
-        break
+    if(Object.keys(this.slugMappings).includes(this.state.period)) {
+        if(this.slugMappings[this.state.period][1] != null) {
+            opts.from_date = this.slugMappings[this.state.period][1]
+        }
+    }
 
-      case 'this-month':
-        opts.from_date = dayjs().startOf('month').toISOString()
-        break
-
-      case 'last-30-days':
-        opts.from_date = dayjs().subtract(30, 'day').toISOString()
-        break
-
-      case 'year-to-date':
-        opts.from_date = dayjs().startOf('year').toISOString()
-        break
-
-      case 'all-time':
-      default:
-        break
+    if(opts.from_date == null) {
+        delete opts.from_date
     }
 
     const client = new API(this.props.config.REPORTER_URL, options)
@@ -139,10 +131,19 @@ class Home extends React.Component {
     if(!this.state.scans || !this.state.codes) {
       return ("...")
     } else {
+      const things = Object.entries(this.slugMappings).map( m => {
+        return (<NavLink to={this.makeGraphLink(m[0])}>{m[1][0]}</NavLink> )
+      })
+
+      const len = things.length
+
+      for(let i = 0; i < ((len -1) * 2); i = i + 2) {
+        things.splice(i + 1, 0, " | ")
+      }
+
       return (
         <Fragment>
-          <NavLink to={this.makeGraphLink('this-week')}>This week</NavLink> | <NavLink to={this.makeGraphLink('last-7-days')}>Last 7 days</NavLink> | <NavLink to={this.makeGraphLink('this-month')}>This month</NavLink> | <NavLink to={this.makeGraphLink('last-30-days')}>Last 30 days</NavLink> | <NavLink to={this.makeGraphLink('year-to-date')}>Year to date</NavLink> | <NavLink to={this.makeGraphLink('all-time')}>All Time</NavLink>
-
+        {things}
           <TopScansGraph codes={this.state.codes} topscans={this.state.scans} />
         </Fragment>
       )

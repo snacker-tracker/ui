@@ -4,9 +4,9 @@ import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import NavItem from 'react-bootstrap/NavItem'
 import Button from 'react-bootstrap/Button'
-//import Form from 'react-bootstrap/Form'
-//import FormControl from 'react-bootstrap/FormControl'
 import Dropdown from 'react-bootstrap/Dropdown'
+
+import { LocationContext } from '../lib/LocationContext'
 
 
 import { useAuth0 } from "../react-auth0-spa";
@@ -23,23 +23,6 @@ const NavBar = () => {
     await getTokenSilently()
   })()
 
-  /*
-  const handleSubmit = event => {
-    alert(JSON.stringify(event))
-    console.log(event, 'this triggered')
-    event.stopPropagation()
-    event.preventDefault()
-    const form = event.currentTarget;
-
-    console.log(form)
-  };
-
-  <Form inline onSubmit={handleSubmit}>
-    <FormControl onChange={updateSearch} type="text" placeholder="Search" className="mr-sm-2" />
-    <Button type="submit">Search</Button>
-  </Form>
-  */
-
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand to="/" as={NavLink}>Snacker-Tracker UI</Navbar.Brand>
@@ -49,28 +32,24 @@ const NavBar = () => {
           <Nav.Link to="/top-scans" as={NavLink}>Top Scans</Nav.Link>
           <Nav.Link to="/last-scans" as={NavLink}>Last Scans</Nav.Link>
           <Nav.Link to="/categories" as={NavLink}>Categories</Nav.Link>
+          <Dropdown drop="down">
+              <LocationContext.Consumer>
+                  {location => (
+                    <Dropdown.Toggle variant="light" id="dropdown-basic">
+                        {location}
+                    </Dropdown.Toggle>
+                  )}
+            </LocationContext.Consumer>
+
+            <Dropdown.Menu>
+                <Dropdown.Item to="?location=thailand:bangkok" as={NavLink}>Thailand</Dropdown.Item>
+                <Dropdown.Item to="?location=singapore" as={NavLink}>Singapore</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </Nav>
 
         {!isAuthenticated && (
           <NavItem>
-            <Button
-              id="qsLoginBtn"
-              color="primary"
-              className="btn-margin"
-              onClick={() => loginWithRedirect({connection: 'line'})}
-            >
-              Log in (line)
-            </Button>
-
-            <Button
-              id="qsLoginBtn"
-              color="primary"
-              className="btn-margin"
-              onClick={() => loginWithRedirect({connection: 'facebook'})}
-            >
-              Log in (fb)
-            </Button>
-
             <Button
               id="qsLoginBtn"
               color="primary"

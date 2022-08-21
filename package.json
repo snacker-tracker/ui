@@ -2,7 +2,6 @@
   "name": "snacker-tracker-ui",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {},
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -31,14 +30,15 @@
     "d3": "^5.15.0",
     "d3-tip": "^0.9.1",
     "dayjs": "^1.8.16",
-    "react": "^16.11.0",
+    "react": "^18.2.0",
     "react-bootstrap": "^1.0.0-beta.16",
     "react-charts": "^2.0.0-beta.4",
     "react-dom": "^16.11.0",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "^4.0.2",
+    "react-scripts": "^5.0.1",
     "reactstrap": "^8.2.0",
-    "source-map-explorer": "^2.1.2"
+    "source-map-explorer": "^2.1.2",
+    "url": "^0.11.0"
   }
 }

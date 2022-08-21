@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import queryString from 'query-string'
+import url from 'url'
 
 //import Loading from "../components/Loading";
 
@@ -59,7 +59,11 @@ class CodeDetails extends Component {
   constructor(props) {
     super(props)
 
-    const query = queryString.parse(this.props.location.search)
+    //const query = queryString.parse(this.props.location.search)
+      //
+    const query = {
+        "period": "daily"
+    }
 
     this.state = {
       counts: [],
@@ -74,11 +78,14 @@ class CodeDetails extends Component {
   }
 
   componentDidUpdate(previousProps, previousState) {
-    const query = queryString.parse(this.props.location.search)
-    const period = query.period || 'daily'
-    if(period !== previousState.period) {
+    const q = url.parse(this.props.location.search, true).query
+    const query = {
+        "period": q.period || "daily"
+    }
+
+    if(query.period !== previousState.period) {
       this.setState({period: query.period})
-      this.loadGraph(period)
+      this.loadGraph(query.period)
     }
   }
 
@@ -162,7 +169,7 @@ class CodeDetails extends Component {
               {this.state.counts.length > 0 && (<ScanCountGraph counts={this.state.counts} period={this.state.period_map[this.state.period]} />)}
               <NavLink to={this.makeGraphLink('hourly')}>Hourly</NavLink> | <NavLink to={this.makeGraphLink('weekdaily')}>Weekday</NavLink> | <NavLink to={this.makeGraphLink('daily')}>Daily</NavLink>
             </Container>
-            <ScanCountGraph period={queryString.parse(this.props.location.search).period || 'daily'} counts={this.state.counts.items || []} />
+            <ScanCountGraph period={this.state.period || 'daily'} counts={this.state.counts.items || []} />
           </Col>
         </Row>
       </Container>
