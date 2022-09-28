@@ -30,7 +30,7 @@ pipelines:
         destination: ./
 
     environment_variables:
-      #REGISTRY: "DEFINED ON THE AGENT"
+      REGISTRY: ghcr.io
       IMAGE: snacker-tracker/ui
       CHART_NAME: snacker-tracker-ui
       PROJECT: snacker-tracker
@@ -110,7 +110,7 @@ pipelines:
         destination: ./
 
     environment_variables:
-      #REGISTRY: "DEFINED ON THE AGENT"
+      REGISTRY: ghcr.io
       IMAGE: snacker-tracker/ui
       CHART_NAME: snacker-tracker-ui
       PROJECT: snacker-tracker
