@@ -3,9 +3,11 @@ ingress:
   hosts:
     - host: ui.snacker-tracker.prod.k8s.fscker.org
       paths:
-        - /
+        - path: /
+          pathType: ImplementationSpecific
+
   tls:
-    - secretName: ui-snacker-tracker-prod-k8s-fscker-org
+    - secretName: ui-snacker-tracker-prod-k8s-fscker-org-tls-secret
       hosts:
         - ui.snacker-tracker.prod.k8s.fscker.org
 
