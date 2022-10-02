@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ include "snacker-tracker-ui.fullname" . }}
   labels:
-{{ include "snacker-tracker-ui.labels" . | indent 4 }}
+    {{- include "snacker-tracker-ui.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,5 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: {{ include "snacker-tracker-ui.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "snacker-tracker-ui.selectorLabels" . | nindent 4 }}

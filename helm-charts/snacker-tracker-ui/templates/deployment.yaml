@@ -3,39 +3,37 @@ kind: Deployment
 metadata:
   name: {{ include "snacker-tracker-ui.fullname" . }}
   labels:
-    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
-{{ include "snacker-tracker-ui.labels" . | indent 4 }}
+    {{- include "snacker-tracker-ui.labels" . | nindent 4 }}
 spec:
+  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "snacker-tracker-ui.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      {{- include "snacker-tracker-ui.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
-        app.kubernetes.io/name: {{ include "snacker-tracker-ui.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+        {{- include "snacker-tracker-ui.selectorLabels" . | nindent 8 }}
     spec:
-    {{- with .Values.imagePullSecrets }}
+      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
-      volumes:
-        - name: config-volume
-          configMap:
-            name: {{ include "snacker-tracker-ui.fullname" . }}
-            items:
-            - key: config.js
-              path: config.js
+      {{- end }}
+      serviceAccountName: {{ include "snacker-tracker-ui.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          volumeMounts:
-            - name: config-volume
-              mountPath: /usr/share/nginx/html/config/
+
           ports:
             - name: http
               containerPort: 80
@@ -48,17 +46,29 @@ spec:
             httpGet:
               path: /
               port: http
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/share/nginx/html/config/
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity }}
+      {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
+      {{- end }}
+      {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- end }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "snacker-tracker-ui.fullname" . }}
+            items:
+            - key: config.js
+              path: config.js
+

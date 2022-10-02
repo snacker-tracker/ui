@@ -3,13 +3,13 @@ kind: Pod
 metadata:
   name: "{{ include "snacker-tracker-ui.fullname" . }}-test-connection"
   labels:
-{{ include "snacker-tracker-ui.labels" . | indent 4 }}
+    {{- include "snacker-tracker-ui.labels" . | nindent 4 }}
   annotations:
-    "helm.sh/hook": test-success
+    "helm.sh/hook": test
 spec:
   containers:
     - name: wget
       image: busybox
       command: ['wget']
-      args:  ['{{ include "snacker-tracker-ui.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "snacker-tracker-ui.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never
