@@ -62,6 +62,28 @@ class API {
     return response
   }
 
+  async PatchCode(code, body) {
+    const response = await this._patch(`codes/${code}`, JSON.stringify(body))
+    return response
+  }
+
+  _patch(url, body, options = {}) {
+    const req = {
+      method: 'PATCH', // *GET, POST, PUT, DELETE, etc.
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body
+    }
+
+    const path = new URL(url, this.base)
+
+    return this._request(
+      path,
+      req
+    )
+  }
+
   _get(url, params = {}, options = {}) {
     const req = {
       method: 'GET', // *GET, POST, PUT, DELETE, etc.

@@ -6,8 +6,7 @@ import NavItem from 'react-bootstrap/NavItem'
 import Button from 'react-bootstrap/Button'
 import Dropdown from 'react-bootstrap/Dropdown'
 
-import { LocationContext } from '../lib/LocationContext'
-
+//import { LocationContext } from '../lib/LocationContext'
 
 import { useAuth0 } from "../react-auth0-spa";
 
@@ -23,15 +22,7 @@ const NavBar = () => {
     await getTokenSilently()
   })()
 
-  return (
-    <Navbar bg="light" expand="lg">
-      <Navbar.Brand to="/" as={NavLink}>Snacker-Tracker UI</Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="mr-auto">
-          <Nav.Link to="/top-scans" as={NavLink}>Top Scans</Nav.Link>
-          <Nav.Link to="/last-scans" as={NavLink}>Last Scans</Nav.Link>
-          <Nav.Link to="/categories" as={NavLink}>Categories</Nav.Link>
+    /*
           <Dropdown drop="down">
               <LocationContext.Consumer>
                   {location => (
@@ -46,6 +37,17 @@ const NavBar = () => {
                 <Dropdown.Item to="?location=singapore" as={NavLink}>Singapore</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
+    */
+
+  return (
+    <Navbar bg="light" expand="lg">
+      <Navbar.Brand to="/" as={NavLink}>Snacker-Tracker UI</Navbar.Brand>
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar.Collapse id="basic-navbar-nav">
+        <Nav className="mr-auto">
+          <Nav.Link to="/top-scans" as={NavLink}>Top Scans</Nav.Link>
+          <Nav.Link to="/last-scans" as={NavLink}>Last Scans</Nav.Link>
+          <Nav.Link to="/categories" as={NavLink}>Categories</Nav.Link>
         </Nav>
 
         {!isAuthenticated && (

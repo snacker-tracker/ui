@@ -2,10 +2,8 @@ import React, { Component } from "react";
 
 import url from 'url'
 
-//import Loading from "../components/Loading";
-
-import { Badge, Container, Image, Row, Col } from "react-bootstrap"
-import { NavLink } from 'react-router-dom'
+import { Badge, Button, Container, Image, Nav, Row, Col, Carousel } from "react-bootstrap"
+import { NavLink, Link } from 'react-router-dom'
 
 import API from '../lib/API'
 
@@ -14,7 +12,9 @@ const  CanvasJSChart = CanvasJSReact.CanvasJSChart
 
 const BadgeLink = (props) => {
   return (
-    <NavLink key={props.to} to={props.to}><Badge>{props.category}</Badge></NavLink>
+    <NavLink key={props.to} to={props.to}>
+      <Badge bg={"primary"} style={{"color":"white"}}>{props.category}</Badge>
+    </NavLink>
   )
 }
 
@@ -145,7 +145,12 @@ class CodeDetails extends Component {
 
     return (
       <Container>
-        <h1>{this.state.code && (this.state.code.name)}</h1>
+          <h1>{this.state.code && (this.state.code.name)}
+              <NavLink to={"/codes/" + this.props.match.params.code + "/edit"} style={{"float":"right"}}>
+                <Button>Edit</Button>
+              </NavLink>
+          </h1>
+
         <Row>
           {this.state.badges && this.state.badges.map( badge => {
             return badge
@@ -155,11 +160,15 @@ class CodeDetails extends Component {
           <Col md="3">
               <Row>
                 <Col>
+                <Carousel>
                   {this.state.pictures && this.state.pictures.map( p => {
                     return (
-                      <Image key={p.id} src={p.url} rounded />
+                        <Carousel.Item>
+                            <Image key={p.id} src={p.url} rounded fluid />
+                        </Carousel.Item>
                     )
                   })}
+                </Carousel>
                 </Col>
               </Row>
           </Col>

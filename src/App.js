@@ -9,6 +9,7 @@ import NavBar from "./components/NavBar"
 import Home from "./views/Home"
 import Profile from "./views/Profile"
 import CodeDetails from "./views/CodeDetails"
+import CodeEdit from "./views/CodeEdit"
 import LastScans from "./views/LastScans"
 import TopScans from "./views/TopScans"
 import CategoriesView from "./views/Categories"
@@ -36,7 +37,8 @@ const App = () => {
             <AuthOptionalRoute path="/" exact component={Home} />
             <AuthOptionalRoute path="/last-scans" exact component={LastScans} />
             <AuthOptionalRoute path="/top-scans" exact component={TopScans} />
-            <AuthOptionalRoute path="/codes/:code" component={CodeDetails} />
+            <AuthOptionalRoute path="/codes/:code" exact component={CodeDetails} />
+            <AuthOptionalRoute path="/codes/:code/edit" exact component={CodeEdit} />
             <AuthOptionalRoute path="/categories" exact component={CategoriesView} />
             <AuthOptionalRoute path="/categories/:category" component={CategoryView} />
             <AuthOptionalRoute path="/d3" component={D3View} />
