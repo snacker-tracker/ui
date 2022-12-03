@@ -8,7 +8,7 @@ image:
   repository: leprechaun/snacker-tracker-ui
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "02"
+  # tag: "02"
 
 imagePullSecrets: []
 nameOverride: ""
