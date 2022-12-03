@@ -142,13 +142,14 @@ class CodeDetails extends Component {
   }
 
   render() {
+    const edit_button = <NavLink to={"/codes/" + this.props.match.params.code + "/edit"} style={{"float":"right"}}>
+      <Button>Edit</Button>
+    </NavLink>
 
     return (
       <Container>
           <h1>{this.state.code && (this.state.code.name)}
-              <NavLink to={"/codes/" + this.props.match.params.code + "/edit"} style={{"float":"right"}}>
-                <Button>Edit</Button>
-              </NavLink>
+              {this.props.auth.isAuthenticated && edit_button}
           </h1>
 
         <Row>

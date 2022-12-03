@@ -10,8 +10,6 @@ const CodeEdit = (props) => {
 
     const options = {}
 
-    console.log(props)
-
     if(props.auth && props.auth && props.auth.isAuthenticated) {
       options['token'] = props.auth.getTokenSilently
     }
