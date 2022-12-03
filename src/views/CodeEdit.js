@@ -1,20 +1,6 @@
-import React, { Component, useEffect, useState } from "react";
-
-import url from 'url'
-
-import { Badge, Button, Container, Form, Image, Nav, Row, Col, Carousel } from "react-bootstrap"
-import { NavLink } from 'react-router-dom'
-
-
+import React, { useEffect, useState } from "react";
+import { Button, Container, Form, Row, Col } from "react-bootstrap"
 import API from '../lib/API'
-
-const BadgeLink = (props) => {
-    return (
-        <NavLink key={props.to} to={props.to}>
-            <Badge bg={"primary"} style={{"color":"white"}}>{props.category}</Badge>
-        </NavLink>
-    )
-}
 
 const CodeEdit = (props) => {
     const [name, setName] = useState("")

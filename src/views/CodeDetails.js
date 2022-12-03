@@ -2,8 +2,8 @@ import React, { Component } from "react";
 
 import url from 'url'
 
-import { Badge, Button, Container, Image, Nav, Row, Col, Carousel } from "react-bootstrap"
-import { NavLink, Link } from 'react-router-dom'
+import { Badge, Button, Container, Image, Row, Col, Carousel } from "react-bootstrap"
+import { NavLink } from 'react-router-dom'
 
 import API from '../lib/API'
 
