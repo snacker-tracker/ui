@@ -101,6 +101,7 @@ pipelines:
                 if [ "$GIT_BRANCH" != "master" ]; then
                   curl "${GO_SERVER_URL}/api/stages/${GO_PIPELINE_NAME}/${GO_PIPELINE_COUNTER}/${GO_STAGE_NAME}/${GO_STAGE_COUNTER}/cancel" \
                     -H "Authorization: Bearer ${GOCD_ACCESS_TOKEN}" \
+                    -H 'Accept: application/vnd.go.cd.v3+json' \
                     -H 'X-GoCD-Confirm: true' \
                     -X POST \
                     -k
