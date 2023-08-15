@@ -34,11 +34,10 @@ pipelines:
       IMAGE: snacker-tracker/ui
       CHART_NAME: snacker-tracker-ui
       PROJECT: snacker-tracker
-      GO_AUTOMATION_USER: automaton
       GITHUB_AUTOMATION_USER: gocd-service-account
     secure_variables:
-      GO_AUTOMATION_PASSWORD: "AES:aF+FRmwjrOx8dMgQft51/g==:PP8FGGNs9N5zkSAMZXN1yg=="
       GITHUB_AUTOMATION_PASSWORD: "AES:aF+FRmwjrOx8dMgQft51/g==:PP8FGGNs9N5zkSAMZXN1yg=="
+      GOCD_ACCESS_TOKEN: "AES:zlFeMNUVUnIx8wNZpRuacg==:QBRzmWKLzUjT0si94mnB+mxrKokPh9uRcw1RAFm+/FUVnpZlHR7Y38XdfdGNV9IY"
     stages:
       - tests:
           jobs:
@@ -101,7 +100,7 @@ pipelines:
 
                 if [ "$GIT_BRANCH" != "master" ]; then
                   curl "${GO_SERVER_URL}/api/stages/${GO_PIPELINE_NAME}/${GO_STAGE_NAME}/cancel" \
-                    -u "${GO_AUTOMATION_USER}:${GO_AUTOMATION_PASSWORD}" \
+                    -H "Authorization: Bearer ${GOCD_ACCESS_TOKEN}" \
                     -H 'Confirm: true' \
                     -X POST \
                     -k
