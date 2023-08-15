@@ -94,14 +94,14 @@ pipelines:
       - dummy-stage:
           tasks:
             - script: |
-                set -e
+                set -ex
 
                 export GIT_BRANCH="${GO_SCM_GIT_SNACKER_TRACKER_UI_CURRENT_BRANCH}"
 
                 if [ "$GIT_BRANCH" != "master" ]; then
-                  curl "${GO_SERVER_URL}/api/stages/${GO_PIPELINE_NAME}/${GO_STAGE_NAME}/cancel" \
+                  curl "${GO_SERVER_URL}/api/stages/${GO_PIPELINE_NAME}/${GO_PIPELINE_COUNTER}/${GO_STAGE_NAME}/${GO_STAGE_COUNTER}/cancel" \
                     -H "Authorization: Bearer ${GOCD_ACCESS_TOKEN}" \
-                    -H 'Confirm: true' \
+                    -H 'X-GoCD-Confirm: true' \
                     -X POST \
                     -k
                 fi
