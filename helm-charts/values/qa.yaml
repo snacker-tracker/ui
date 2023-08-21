@@ -5,11 +5,15 @@ ingress:
       paths:
         - path: /
           pathType: ImplementationSpecific
-
+    - host: snacker-tracker.qa.fscker.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
   tls:
     - secretName: ui-snacker-tracker-qa-k8s-fscker-org
       hosts:
         - ui.snacker-tracker.qa.k8s.fscker.org
+        - snacker-tracker.qa.fscker.org
 
 resources:
   # NON-DEFAULT: We should *always* specify `requests`, but probably not `limits`
@@ -22,4 +26,4 @@ config:
     OAUTH_CLIENT_ID: X8Q3vadW5s1VkbqleV4LrpFwU5UjV2Ay
     OAUTH_ISSUER: fscker-public-qa.eu.auth0.com
     OAUTH_AUDIENCE: snacker-tracker-reporter
-    REPORTER_URL: https://reporter.snacker-tracker.qa.k8s.fscker.org/v1
+    REPORTER_URL: https://snacker-tracker-api.qa.fscker.org/v1
